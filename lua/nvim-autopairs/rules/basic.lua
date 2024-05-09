@@ -1,5 +1,6 @@
 local Rule = require("nvim-autopairs.rule")
 local cond = require("nvim-autopairs.conds")
+local ts_conds = require('nvim-autopairs.ts-conds')
 local utils = require('nvim-autopairs.utils')
 
 local function quote_creator(opt)
@@ -54,7 +55,9 @@ local function setup(opt)
             end)
             :with_pair(cond.not_before_regex("%w")),
         quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
-        Rule("''", "''", 'nix'):with_move(cond.after_text("'")),
+        Rule("''", "''", 'nix')
+            :with_pair(ts_conds.is_not_ts_node("string_fragment"))
+            :with_move(cond.after_text("'")),
         quote("`", "`"),
         quote('"', '"', "-vim"),
         quote('"', '"', "vim"):with_pair(cond.not_before_regex("^%s*$", -1)),
